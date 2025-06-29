@@ -1,8 +1,8 @@
-# AI Code Translator
+# Gemini AI Code Translator
 
-Use AI to translate code from one language to another.
+Use Gemini AI to translate code from one language to another.
 
-![AI Code Translator](./public/screenshot.png)
+![Gemini AI Code Translator](./public/screenshot.png)
 
 ## Running Locally
 
@@ -17,8 +17,12 @@ git clone https://github.com/xautiik/ai-code-translator.git
 ```bash
 npm i
 ```
+**3. Create .env**
 
-**3. Run App**
+```bash
+GEMINI_API_KEY=YOUR_KEY_HERE
+```
+**4. Run App**
 
 ```bash
 npm run dev
