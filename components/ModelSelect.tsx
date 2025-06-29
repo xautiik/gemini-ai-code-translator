@@ -1,14 +1,15 @@
-import { OpenAIModel } from '@/types/types';
+// components/ModelSelect.tsx
+import { GeminiModel } from '@/types/types'; // Import GeminiModel
 import { FC } from 'react';
 
 interface Props {
-  model: OpenAIModel;
-  onChange: (model: OpenAIModel) => void;
+  model: GeminiModel; // Use GeminiModel type
+  onChange: (model: GeminiModel) => void; // Use GeminiModel type
 }
 
 export const ModelSelect: FC<Props> = ({ model, onChange }) => {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(e.target.value as OpenAIModel);
+    onChange(e.target.value as GeminiModel); // Cast to GeminiModel
   };
 
   return (
@@ -17,8 +18,10 @@ export const ModelSelect: FC<Props> = ({ model, onChange }) => {
       value={model}
       onChange={handleChange}
     >
-      <option value="gpt-3.5-turbo">GPT-3.5</option>
-      <option value="gpt-4">GPT-4</option>
+      {/* Updated options to Gemini models */}
+      <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+      <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+      <option value="gemini-pro">Gemini Pro</option>
     </select>
   );
 };
