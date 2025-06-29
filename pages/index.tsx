@@ -3,7 +3,8 @@ import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
-import { OpenAIModel, TranslateBody } from '@/types/types';
+// Removed OpenAIModel as it's specific to OpenAI.
+import { TranslateBody, GeminiModel } from '@/types/types'; // Import GeminiModel from types/types.ts
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
@@ -12,32 +13,38 @@ export default function Home() {
   const [outputLanguage, setOutputLanguage] = useState<string>('Python');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
-  const [model, setModel] = useState<OpenAIModel>('gpt-3.5-turbo');
+  // Changed the type and initial value to a Gemini model
+  const [model, setModel] = useState<GeminiModel>('gemini-1.5-flash'); // Using a modern Gemini model
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
 
   const handleTranslate = async () => {
-    const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
+    // Adjust maxCodeLength based on Gemini model capabilities.
+    // Gemini 1.5 Flash and Pro have very large context windows.
+    // Setting a generous but still practical limit.
+    const maxCodeLength = 100000; // Increased limit for Gemini models
 
     if (!apiKey) {
-      alert('Please enter an API key.');
+      // Replaced alert with a custom message box or toast notification in a real app
+      // For this example, keeping alert for direct replacement.
+      alert('Please enter a Gemini API key.');
       return;
     }
 
     if (inputLanguage === outputLanguage) {
-      alert('Please select different languages.');
+      alert('Please select different languages for translation.');
       return;
     }
 
     if (!inputCode) {
-      alert('Please enter some code.');
+      alert('Please enter some code or natural language to translate.');
       return;
     }
 
     if (inputCode.length > maxCodeLength) {
       alert(
-        `Please enter code less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`,
+        `Please enter input less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`,
       );
       return;
     }
@@ -66,7 +73,8 @@ export default function Home() {
 
     if (!response.ok) {
       setLoading(false);
-      alert('Something went wrong.');
+      const errorText = await response.text(); // Get specific error message from API route
+      alert(`Translation failed: ${errorText}`);
       return;
     }
 
@@ -74,7 +82,7 @@ export default function Home() {
 
     if (!data) {
       setLoading(false);
-      alert('Something went wrong.');
+      alert('No response data received.');
       return;
     }
 
@@ -109,31 +117,32 @@ export default function Home() {
 
   const handleApiKeyChange = (value: string) => {
     setApiKey(value);
-
-    localStorage.setItem('apiKey', value);
+    localStorage.setItem('geminiApiKey', value); // Store with a Gemini-specific key
   };
 
   useEffect(() => {
-    if (hasTranslated) {
+    // Re-evaluate if this behavior is desired for re-translation on outputLanguage change
+    // If you only want it to translate on button click, you might remove this useEffect.
+    if (hasTranslated && outputCode) { // Add outputCode to dependency to prevent loop on initial render
       handleTranslate();
     }
-  }, [outputLanguage]);
+  }, [outputLanguage]); // Dependency array: run when outputLanguage changes
 
   useEffect(() => {
-    const apiKey = localStorage.getItem('apiKey');
+    const apiKey = localStorage.getItem('geminiApiKey'); // Retrieve with Gemini-specific key
 
     if (apiKey) {
       setApiKey(apiKey);
     }
-  }, []);
+  }, []); // Empty dependency array: run once on component mount
 
   return (
     <>
       <Head>
-        <title>Code Translator</title>
+        <title>Gemini Code Translator</title> {/* Updated title */}
         <meta
           name="description"
-          content="Use AI to translate code from one language to another."
+          content="Use Google Gemini AI to translate code from one language to another." // Updated description
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -148,7 +157,8 @@ export default function Home() {
         </div>
 
         <div className="mt-2 flex items-center space-x-2">
-          <ModelSelect model={model} onChange={(value) => setModel(value)} />
+          {/* Ensure ModelSelect component can handle GeminiModel type */}
+          <ModelSelect model={model} onChange={(value) => setModel(value as GeminiModel)} />
 
           <button
             className="w-[140px] cursor-pointer rounded-md bg-violet-500 px-4 py-2 font-bold hover:bg-violet-600 active:bg-violet-700"
