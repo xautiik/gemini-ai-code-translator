@@ -1,10 +1,8 @@
-export type GeminiModel = 'gemini-pro' | 'gemini-1.5-flash' | 'gemini-1.5-pro'; // Add or remove models as needed
-
-// TranslateBody uses GeminiModel now
+export type GeminiModel = 'gemini-1.5-flash'; // Add or remove models as needed ex. 'gemini-pro' | 'gemini-1.5-pro'
 export interface TranslateBody {
   inputLanguage: string;
   outputLanguage: string;
   inputCode: string;
-  model: GeminiModel; // Changed from OpenAIModel
+  model: GeminiModel;
   apiKey: string;
 }

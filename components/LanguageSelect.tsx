@@ -12,14 +12,18 @@ export const LanguageSelect: FC<Props> = ({ language, onChange }) => {
 
   return (
     <select
-      className="w-full rounded-md bg-[#1F2937] px-4 py-2 text-neutral-200"
+      className="w-full px-3 py-2 text-sm text-white transition-colors border rounded-md shadow-sm outline-none border-neutral-700 bg-neutral-900 focus:border-primary focus:ring-1 focus:ring-primary"
       value={language}
       onChange={handleChange}
     >
       {languages
         .sort((a, b) => a.label.localeCompare(b.label))
         .map((language) => (
-          <option key={language.value} value={language.value}>
+          <option
+            key={language.value}
+            value={language.value}
+            className="text-white bg-neutral-900"
+          >
             {language.label}
           </option>
         ))}

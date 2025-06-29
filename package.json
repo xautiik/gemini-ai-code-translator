@@ -1,6 +1,6 @@
 {
-  "name": "code-translate",
-  "version": "0.1.0",
+  "name": "ai-code-translate",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@codemirror/legacy-modes": "^6.3.2",
+    "@codemirror/theme-one-dark": "^6.1.3",
     "@google/generative-ai": "^0.24.1",
+    "@uiw/codemirror-theme-gruvbox-dark": "^4.23.14",
     "@uiw/codemirror-theme-tokyo-night": "^4.19.11",
     "@uiw/react-codemirror": "^4.19.11",
     "endent": "^2.1.0",

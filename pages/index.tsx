@@ -3,8 +3,7 @@ import { CodeBlock } from '@/components/CodeBlock';
 import { LanguageSelect } from '@/components/LanguageSelect';
 import { ModelSelect } from '@/components/ModelSelect';
 import { TextBlock } from '@/components/TextBlock';
-// Removed OpenAIModel as it's specific to OpenAI.
-import { TranslateBody, GeminiModel } from '@/types/types'; // Import GeminiModel from types/types.ts
+import { TranslateBody, GeminiModel } from '@/types/types';
 import Head from 'next/head';
 import { useEffect, useState } from 'react';
 
@@ -13,21 +12,15 @@ export default function Home() {
   const [outputLanguage, setOutputLanguage] = useState<string>('Python');
   const [inputCode, setInputCode] = useState<string>('');
   const [outputCode, setOutputCode] = useState<string>('');
-  // Changed the type and initial value to a Gemini model
-  const [model, setModel] = useState<GeminiModel>('gemini-1.5-flash'); // Using a modern Gemini model
+  const [model, setModel] = useState<GeminiModel>('gemini-1.5-flash');
   const [loading, setLoading] = useState<boolean>(false);
   const [hasTranslated, setHasTranslated] = useState<boolean>(false);
   const [apiKey, setApiKey] = useState<string>('');
 
   const handleTranslate = async () => {
-    // Adjust maxCodeLength based on Gemini model capabilities.
-    // Gemini 1.5 Flash and Pro have very large context windows.
-    // Setting a generous but still practical limit.
-    const maxCodeLength = 100000; // Increased limit for Gemini models
+    const maxCodeLength = 100000;
 
     if (!apiKey) {
-      // Replaced alert with a custom message box or toast notification in a real app
-      // For this example, keeping alert for direct replacement.
       alert('Please enter a Gemini API key.');
       return;
     }
@@ -73,7 +66,7 @@ export default function Home() {
 
     if (!response.ok) {
       setLoading(false);
-      const errorText = await response.text(); // Get specific error message from API route
+      const errorText = await response.text();
       alert(`Translation failed: ${errorText}`);
       return;
     }
@@ -117,51 +110,48 @@ export default function Home() {
 
   const handleApiKeyChange = (value: string) => {
     setApiKey(value);
-    localStorage.setItem('geminiApiKey', value); // Store with a Gemini-specific key
+    localStorage.setItem('geminiApiKey', value);
   };
 
   useEffect(() => {
-    // Re-evaluate if this behavior is desired for re-translation on outputLanguage change
-    // If you only want it to translate on button click, you might remove this useEffect.
-    if (hasTranslated && outputCode) { // Add outputCode to dependency to prevent loop on initial render
+    if (hasTranslated && outputCode) { 
       handleTranslate();
     }
-  }, [outputLanguage]); // Dependency array: run when outputLanguage changes
+  }, [outputLanguage]);
 
   useEffect(() => {
-    const apiKey = localStorage.getItem('geminiApiKey'); // Retrieve with Gemini-specific key
+    const apiKey = localStorage.getItem('geminiApiKey');
 
     if (apiKey) {
       setApiKey(apiKey);
     }
-  }, []); // Empty dependency array: run once on component mount
+  }, []);
 
   return (
     <>
       <Head>
-        <title>Gemini Code Translator</title> {/* Updated title */}
+        <title>Gemini Code Translator</title>
         <meta
           name="description"
-          content="Use Google Gemini AI to translate code from one language to another." // Updated description
+          content="Use Google Gemini AI to translate code from one language to another."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10">
-        <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
-          <div className="text-4xl font-bold">AI Code Translator</div>
+        <div className="flex flex-col items-center justify-center mt-10 sm:mt-20">
+          <div className="text-4xl font-bold">Gemini-AI Code Translator</div>
         </div>
 
-        <div className="mt-6 text-center text-sm">
+        <div className="mt-6 text-sm text-center">
           <APIKeyInput apiKey={apiKey} onChange={handleApiKeyChange} />
         </div>
 
-        <div className="mt-2 flex items-center space-x-2">
-          {/* Ensure ModelSelect component can handle GeminiModel type */}
+        <div className="flex items-center mt-2 space-x-2">
           <ModelSelect model={model} onChange={(value) => setModel(value as GeminiModel)} />
 
           <button
-            className="w-[140px] cursor-pointer rounded-md bg-violet-500 px-4 py-2 font-bold hover:bg-violet-600 active:bg-violet-700"
+          className="w-[140px] rounded-md border border-violet-600 bg-violet-600/10 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-600 hover:text-white active:bg-violet-700 disabled:opacity-50 disabled:pointer-events-none transition-colors duration-200 ease-in-out"
             onClick={() => handleTranslate()}
             disabled={loading}
           >
@@ -169,7 +159,7 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="mt-2 text-center text-xs">
+        <div className="mt-2 text-xs text-center">
           {loading
             ? 'Translating...'
             : hasTranslated
@@ -178,8 +168,8 @@ export default function Home() {
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
-          <div className="h-100 flex flex-col justify-center space-y-2 sm:w-2/4">
-            <div className="text-center text-xl font-bold">Input</div>
+          <div className="flex flex-col justify-center space-y-2 h-100 sm:w-2/4">
+            <div className="text-xl font-bold text-center">Input</div>
 
             <LanguageSelect
               language={inputLanguage}
@@ -211,8 +201,8 @@ export default function Home() {
               />
             )}
           </div>
-          <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
-            <div className="text-center text-xl font-bold">Output</div>
+          <div className="flex flex-col justify-center h-full mt-8 space-y-2 sm:mt-0 sm:w-2/4">
+            <div className="text-xl font-bold text-center">Output</div>
 
             <LanguageSelect
               language={outputLanguage}

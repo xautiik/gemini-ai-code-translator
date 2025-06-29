@@ -1,13 +1,6 @@
 import endent from 'endent';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-// No need for eventsource-parser with the Google Generative AI SDK for streaming
-// import {
-//   createParser,
-//   ParsedEvent,
-//   ReconnectInterval,
-// } from 'eventsource-parser';
-
 const createPrompt = (
   inputLanguage: string,
   outputLanguage: string,
@@ -78,29 +71,18 @@ export const GeminiStream = async (
   inputLanguage: string,
   outputLanguage: string,
   inputCode: string,
-  model: string, // This will be 'gemini-pro', 'gemini-1.5-flash', etc.
+  model: string,
   key: string,
 ) => {
   const prompt = createPrompt(inputLanguage, outputLanguage, inputCode);
 
-  // Initialize the GoogleGenerativeAI client
-  // The API key is passed directly to the constructor
   const genAI = new GoogleGenerativeAI(key || process.env.GEMINI_API_KEY!);
-  
-  // Get the generative model
+ 
   const geminiModel = genAI.getGenerativeModel({ model });
 
   try {
-    // Send the content to the Gemini model for streaming response
     const result = await geminiModel.generateContentStream({
       contents: [{ role: 'user', parts: [{ text: prompt }] }],
-      // You can add generationConfig here for more control over the output
-      // For example, to control randomness:
-      // generationConfig: {
-      //   temperature: 0.1, // Lower temperature for more deterministic output
-      //   topP: 0.9,
-      //   topK: 1,
-      // },
     });
 
     const encoder = new TextEncoder();
@@ -108,22 +90,18 @@ export const GeminiStream = async (
 
     const stream = new ReadableStream({
       async start(controller) {
-        // Iterate over the chunks from the Gemini API stream
         for await (const chunk of result.stream) {
           const text = chunk.text();
-          // Encode the text and enqueue it to the ReadableStream
           const queue = encoder.encode(text);
           controller.enqueue(queue);
         }
-        // Close the stream when done
         controller.close();
       },
     });
 
     return stream;
-  } catch (e: any) { // Type 'e' as 'any' to safely access 'message'
+  } catch (e: any) {
     console.error("Error from Gemini API:", e);
-    // Throw a more descriptive error if possible
     throw new Error(`Gemini API returned an error: ${e.message || 'Unknown error occurred.'}`);
   }
 };
