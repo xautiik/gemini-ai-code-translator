@@ -9,7 +9,7 @@ Use Gemini AI to translate code from one language to another.
 **1. Clone Repo**
 
 ```bash
-git clone https://github.com/xautiik/ai-code-translator.git
+git clone https://github.com/xautiik/gemini-ai-code-translator.git
 ```
 
 **2. Install Dependencies**
